@@ -26,7 +26,16 @@ func main() {
 		log.Printf("%s version: %s (%s on %s/%s; %s)", os.Args[0], Version, runtime.Version(), runtime.GOOS, runtime.GOARCH, runtime.Compiler)
 		os.Exit(1)
 	}
-	// first spawn our child process and follow it's std{err,out}
+
+	// first, test to make sure the nginx config is valid, if not error early so we can see the error
+	test := exec.Command("nginx", "-t")
+	test.Stdout = os.Stdout
+	test.Stderr = os.Stderr
+	if err := test.Run(); err != nil {
+		log.Fatal(err)
+	}
+
+	// next, spawn our child process and follow it's std{err,out}
 	child := exec.Command(os.Args[1], os.Args[2:]...)
 	child.Stdout = os.Stdout
 	child.Stderr = os.Stderr
@@ -34,7 +43,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// now spawn nginx, but we don't care about it's std{err,out}
+	// lastly spawn nginx, but we don't care about it's std{err,out}
 	nginx := exec.Command("nginx", "-g", "daemon off;")
 	if err := nginx.Start(); err != nil {
 		log.Fatal(err)
