@@ -14,7 +14,7 @@ func init() {
 	runtime.LockOSThread()
 }
 
-const Version = "0.1.1"
+const Version = "0.1.2"
 
 func main() {
 	log.SetFlags(0)
