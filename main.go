@@ -43,8 +43,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// lastly spawn nginx, but we don't care about it's std{err,out}
+	// lastly spawn nginx
 	nginx := exec.Command("nginx", "-g", "daemon off;")
+	nginx.Stdout = os.Stdout
+	nginx.Stderr = os.Stderr
 	if err := nginx.Start(); err != nil {
 		log.Fatal(err)
 	}
